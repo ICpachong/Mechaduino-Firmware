@@ -1,14 +1,14 @@
 
 /*
   -------------------------------------------------------------
-  Mechaduino 0.1 Firmware  v0.1.3
+  Mechaduino 0.1 & 0.2 Firmware  v0.1.5
   SAM21D18 (Arduino Zero compatible), AS5047 encoder, A4954 driver
 
   All Mechaduino related materials are released under the
   Creative Commons Attribution Share-Alike 4.0 License
   https://creativecommons.org/licenses/by-sa/4.0/
 
-  Many thanks to Will Church, Marco Farrugia, Kai Wolter, Trampas Stern, Mike Anton.
+  Many thanks to all contributors!
   --------------------------------------------------------------
   
   Controlled via a SerialUSB terminal at 115200 baud.
@@ -25,7 +25,7 @@
 
  x  -  position mode
  v  -  velocity mode
- x  -  torque mode
+ t  -  torque mode
 
  y  -  enable control loop
  n  -  disable control loop
@@ -64,6 +64,9 @@ void setup()        // This code runs once at startup
   setupSPI();                       // Sets up SPI for communicating with encoder
   digitalWrite(ledPin,LOW);         // turn LED off 
   
+  // spot check some of the lookup table to decide if it has been filled in
+  if (lookup[0] == 0 && lookup[128] == 0 && lookup[1024] == 0)
+    SerialUSB.println("WARNING: Lookup table is empty! Run calibration");
 
   // Uncomment the below lines as needed for your application.
   // Leave commented for initial calibration and tuning.
@@ -87,10 +90,6 @@ void loop()                 // main loop
 
   serialCheck();              //must have this execute in loop for serial commands to function
 
-  //r=0.1125*step_count;      //Don't use this anymore. Step interrupts enabled above by "configureStepDir()", adjust step size in parameters.cpp
+  //r=0.1125*step_count;      //Don't use this anymore. Step interrupts enabled above by "configureStepDir()", adjust step size ("stepangle")in parameters.cpp
 
 }
-
-
-
-
